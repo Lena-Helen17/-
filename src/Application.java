@@ -19,8 +19,10 @@ public class Application {
       Person person3 = new Person("Helen", "USA", 556567712L);
 
       Order order1 = new Order(LocalDate.now(), person1, (short) 10, Status.READING, new ListProducts(product1, 6));
+      Order order2 = new Order(LocalDate.now(), person2, (short) 5, Status.DELITED, new ListProducts(product2, 40));
 
         System.out.println(order1);
+        System.out.println(order2);
         System.out.println(listProduct);
     }
 }
