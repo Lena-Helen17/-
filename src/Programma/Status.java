@@ -1,3 +1,5 @@
+package Programma;
+
 public enum Status {
     READING,
     RUN,

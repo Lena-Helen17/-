@@ -1,9 +1,15 @@
+import Programma.*;
+
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Application {
+
     public static void main(String[] args) {
+
+        Configuration propeties = Configuration.getInstance();
+
         Map<Integer, Product> listProduct = new HashMap<>();
         Product product1 = new Product("ручка", 59.4, 8);
         Product product2 = new Product("карандаш", 6., 100);
