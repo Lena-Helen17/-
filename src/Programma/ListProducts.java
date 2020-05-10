@@ -16,6 +16,7 @@ public class ListProducts {
         this.priceCheckList = product.getPrice() * count;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
