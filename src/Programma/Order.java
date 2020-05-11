@@ -3,7 +3,7 @@ package Programma;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Order {
+public class Order {                //Заказ
     private LocalDate dataStart;
     private Person person;
     private Short discount;

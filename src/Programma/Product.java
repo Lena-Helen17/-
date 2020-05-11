@@ -1,16 +1,17 @@
 package Programma;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Product {
-    private final Integer article;
+public class Product implements Serializable {
+    private final Integer id;
     private String nameProduct;
     private String color;
     private Double price;
     private Integer balance;
 
     public Product(String nameProduct, Double price, Integer balance) {
-       this.article = ( 100000 + (int) (Math.random() * Integer.MAX_VALUE));
+       this.id = ( 100000 + (int) (Math.random() * Integer.MAX_VALUE));
         this.nameProduct = nameProduct;
         if (price > 0) {
             this.price = price;
@@ -22,7 +23,7 @@ public class Product {
     }
 
     public Integer getArticle() {
-        return article;
+        return id;
     }
 
     public String getName() {
@@ -56,7 +57,7 @@ public class Product {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return Objects.equals(article, product.article) &&
+        return Objects.equals(id, product.id) &&
                 Objects.equals(nameProduct, product.nameProduct) &&
                 Objects.equals(color, product.color) &&
                 Objects.equals(price, product.price) &&
@@ -65,11 +66,11 @@ public class Product {
 
     @Override
     public int hashCode() {
-        return Objects.hash(article, nameProduct, color, price, balance);
+        return Objects.hash(id, nameProduct, color, price, balance);
     }
 
     @Override
     public String toString() {
-        return "\n" + nameProduct + " - " + price + " руб. - " + balance + " шт." ;
+        return "\n" + nameProduct + "; " + price + " rub. ; " + balance + " kol." ;
     }
 }
