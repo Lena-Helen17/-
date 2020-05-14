@@ -1,8 +1,7 @@
-package Read_and_Writer;
+package com.moshkova.elena.read_and_writer;
 
 
 import java.io.*;
-import java.util.*;
 
 
 public class ObjectWrite {
