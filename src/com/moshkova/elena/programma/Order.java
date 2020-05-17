@@ -1,6 +1,7 @@
-package Programma;
+package com.moshkova.elena.programma;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
 
 public class Order {                //Заказ
@@ -8,14 +9,23 @@ public class Order {                //Заказ
     private Person person;
     private Short discount;
     private Status statusOrder;
-    private ListProducts listProducts;
+    private HashSet<ListProducts> listProductsHashSet;
 
-    public Order(LocalDate dataStart, Person person, Short discount, Status statusOrder, ListProducts listProducts) {
+
+    public Order(LocalDate dataStart, Person person, Short discount, Status statusOrder,HashSet<ListProducts> listProductsHashSet) {
         this.dataStart = dataStart;
         this.person = person;
         this.discount = discount;
         this.statusOrder = statusOrder;
-        this.listProducts = listProducts;
+        this.listProductsHashSet = listProductsHashSet;
+    }
+
+    public HashSet<ListProducts> getListProductsHashSet() {
+        return listProductsHashSet;
+    }
+
+    public void addListProductsHashSet(ListProducts listProducts) {
+        listProductsHashSet.add(listProducts);
     }
 
     public LocalDate getDataStart() {
@@ -50,14 +60,6 @@ public class Order {                //Заказ
         this.statusOrder = statusOrder;
     }
 
-    public ListProducts getListProducts() {
-        return listProducts;
-    }
-
-    public void setListProducts(ListProducts listProducts) {
-        this.listProducts = listProducts;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -66,13 +68,12 @@ public class Order {                //Заказ
         return Objects.equals(dataStart, order.dataStart) &&
                 Objects.equals(person, order.person) &&
                 Objects.equals(discount, order.discount) &&
-                statusOrder == order.statusOrder &&
-                Objects.equals(listProducts, order.listProducts);
+                Objects.equals(listProductsHashSet, order.listProductsHashSet);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dataStart, person, discount, statusOrder, listProducts);
+        return Objects.hash(dataStart, person, discount, statusOrder, listProductsHashSet);
     }
 
     @Override
@@ -82,7 +83,7 @@ public class Order {                //Заказ
                 ", person=" + person +
                 ", discount=" + discount +
                 ", statusOrder=" + statusOrder +
-                ", listProducts=" + listProducts +
+                ", listProducts=" + listProductsHashSet.toString() +
                 '}';
     }
 }

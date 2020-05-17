@@ -1,3 +1,5 @@
+package com.moshkova.elena;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -16,12 +18,6 @@ public class Configuration {
             }
         }
         return instance;
-    }
-
-    private Properties properties;
-
-    public Properties getProperties() {
-        return properties;
     }
 
     private Configuration() throws IOException{

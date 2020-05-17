@@ -1,17 +1,19 @@
-package Programma;
+package com.moshkova.elena.programma;
 
-import java.util.Objects;
+import java.util.*;
 
 public class Person {
     private String namePerson;
     private String adresDostavki;
     private Long telefonNumber;
 
+
     public Person(String namePerson, String adresDostavki, Long telefonNumber) {
         this.namePerson = namePerson;
         this.adresDostavki = adresDostavki;
         this.telefonNumber = telefonNumber;
     }
+
 
     public String getNamePerson() {
         return namePerson;
