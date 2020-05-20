@@ -52,7 +52,7 @@ public class Registrashen_Person  extends JFrame{
            public void actionPerformed(ActionEvent e) {
                //int x = 23;
                //String name = "person" + "x";
-               Person name = new Person(namePersonText.getText(),adresDostavkiText.getText(),Long.parseLong(telefonNumberText.getText()));
+               Person name = new Person(namePersonText.getText(),adresDostavkiText.getText(), telefonNumberText.getText());
            }
        } );
 }

@@ -4,21 +4,24 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 
-public class Order {                //Заказ
-    private LocalDate dataStart;
+public class Order {            //заказ
+    private String dataStart;
     private Person person;
     private Short discount;
-    private Status statusOrder;
+    private String statusOrder;
     private HashSet<ListProducts> listProductsHashSet;
 
-
-    public Order(LocalDate dataStart, Person person, Short discount, Status statusOrder,HashSet<ListProducts> listProductsHashSet) {
+    public Order(String dataStart, Person person, Short discount, String statusOrder, HashSet<ListProducts> listProductsHashSet) {
         this.dataStart = dataStart;
         this.person = person;
         this.discount = discount;
         this.statusOrder = statusOrder;
         this.listProductsHashSet = listProductsHashSet;
     }
+
+    public Order(String text, Person person, String text1, HashSet<ListProducts> hashSet) {
+    }
+
 
     public HashSet<ListProducts> getListProductsHashSet() {
         return listProductsHashSet;
@@ -28,11 +31,11 @@ public class Order {                //Заказ
         listProductsHashSet.add(listProducts);
     }
 
-    public LocalDate getDataStart() {
+    public String getDataStart() {
         return dataStart;
     }
 
-    public void setDataStart(LocalDate dataStart) {
+    public void setDataStart(String dataStart) {
         this.dataStart = dataStart;
     }
 
@@ -52,11 +55,11 @@ public class Order {                //Заказ
         this.discount = discount;
     }
 
-    public Status getStatusOrder() {
+    public String getStatusOrder() {
         return statusOrder;
     }
 
-    public void setStatusOrder(Status statusOrder) {
+    public void setStatusOrder(String statusOrder) {
         this.statusOrder = statusOrder;
     }
 

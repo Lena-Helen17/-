@@ -5,10 +5,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Login_in extends JFrame {
+public class ProductAdd extends JFrame {
 
-    public Login_in() {
-        setTitle("Вход в личный кабинет");
+    public ProductAdd() {
+        setTitle("Добавляем товар");
         setSize(300, 300);
         setLocationRelativeTo(null);
         setLayout(new GridBagLayout());

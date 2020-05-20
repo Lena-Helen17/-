@@ -1,15 +1,23 @@
 package com.moshkova.elena.frame;
 
 import com.moshkova.elena.programma.ListProducts;
+import com.moshkova.elena.programma.Order;
+import com.moshkova.elena.programma.Person;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
 public class OrderFrame extends JFrame {
+    LocalDate dataStart = LocalDate.now();
+   // Short discaunt = Short.valueOf((short)0);
 
-    public OrderFrame(HashSet<ListProducts> hashSet)  {
+    public OrderFrame(HashSet<ListProducts> hashSet, HashMap<Integer, Order> orderList)  {
         setTitle("Форма заказа");
         setSize(new Dimension(900, 400));
         setLayout(new GridBagLayout());
@@ -53,10 +61,19 @@ public class OrderFrame extends JFrame {
 
         JLabel dataOrder = new JLabel("Дата создания заказа:");
         JLabel place = new JLabel("Процент скидки:");
+        JCheckBox placeYes = new JCheckBox();
         JLabel statuc = new JLabel("Статус заказа:");
         JTextField dataOrderText = new JTextField(10);
         JTextField placeText = new JTextField(10);
-        JTextField statucText = new JTextField(10);
+        JMenuBar menuBar = new JMenuBar();
+        JMenu statucText = new JMenu("                     ");
+        JMenuItem menuItem1 = new JMenuItem("EADIRNG");
+        JMenuItem menuItem2 = new JMenuItem("DELITED");
+        JMenuItem menuItem3 = new JMenuItem("RUN");
+        statucText.add(menuItem1);
+        statucText.add(menuItem2);
+        statucText.add(menuItem3);
+        menuBar.add(statucText);
 
 
         panelInfo.add(dataOrder, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.9,
@@ -71,12 +88,35 @@ public class OrderFrame extends JFrame {
         panelInfo.add(placeText, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.9,
                 GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
                 new Insets(2, 2, 2, 2), 0, 0));
+        panelInfo.add(placeYes, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
         panelInfo.add(statuc, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.9,
                 GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
                 new Insets(2, 2, 2, 2), 0, 0));
-        panelInfo.add(statucText, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.9,
+        panelInfo.add(menuBar, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.9,
                 GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
                 new Insets(2, 2, 2, 2), 0, 0));
+
+        dataOrderText.setText(this.dataStart.format(DateTimeFormatter.ofPattern("d.MM.uuuu")));
+        menuItem1.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+           statucText.setText(menuItem1.getText());
+            }
+        });
+        menuItem2.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                statucText.setText(menuItem2.getText());
+            }
+        });
+        menuItem3.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                statucText.setText(menuItem3.getText());
+            }
+        });
 
 //________________________________________________________    товары из корзины
         JPanel panelBascket = new JPanel();
@@ -132,6 +172,15 @@ public class OrderFrame extends JFrame {
         JButton saveButton = new JButton("Сохранить");
 
         panelDown.add(saveButton);
+        saveButton.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Order order1 = new Order(dataOrderText.getText(), new Person(namePersonText.getText(), adresDostavkiText.getText(), telefonNumberText.getText()),
+                        statucText.getText(), hashSet);
+                Integer x =  orderList.size() +1;
+                orderList.put(x, order1);
+            }
+        });
 
  //________________________________________________
 

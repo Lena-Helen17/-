@@ -13,10 +13,19 @@ public class Product implements Serializable {
 
     public Product() {}
 
+    public Product(Long id, String nameProduct, String color, Double price, Integer balance) {
+        this.id = id;
+        this.nameProduct = nameProduct;
+        this.color = color;
+        this.price = price;
+        this.balance = balance;
+    }
+
+
     public void setId(Long id) {
-        if (id == null) {
-            this.id = id;
-        }
+         this.id = id;
+
+
     }
 
     public Long getId() {
@@ -71,6 +80,6 @@ public class Product implements Serializable {
 
     @Override
     public String toString() {
-        return "\n" + nameProduct + "; " + price + " rub. ; " + balance + " kol." ;
+        return "\n" + id + ";" + nameProduct + "; " + price + " rub. ; " + balance + " kol." ;
     }
 }

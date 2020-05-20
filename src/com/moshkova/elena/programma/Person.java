@@ -5,15 +5,13 @@ import java.util.*;
 public class Person {
     private String namePerson;
     private String adresDostavki;
-    private Long telefonNumber;
+    private String telefonNumber;
 
-
-    public Person(String namePerson, String adresDostavki, Long telefonNumber) {
+    public Person(String namePerson, String adresDostavki, String telefonNumber) {
         this.namePerson = namePerson;
         this.adresDostavki = adresDostavki;
         this.telefonNumber = telefonNumber;
     }
-
 
     public String getNamePerson() {
         return namePerson;
@@ -31,35 +29,30 @@ public class Person {
         this.adresDostavki = adresDostavki;
     }
 
-    public Long getTelefonNamber() {
+    public String getTelefonNamber() {
         return telefonNumber;
     }
 
-    public void setTelefonNamber(Long telefonNamber) {
+    public void setTelefonNamber(String telefonNamber) {
         this.telefonNumber = telefonNumber;
     }
 
-    @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Person person = (Person) o;
-        return Objects.equals(namePerson, person.namePerson) &&
-                Objects.equals(adresDostavki, person.adresDostavki) &&
-                Objects.equals(telefonNumber, person.telefonNumber);
+        if (this == o) {
+            return true;
+        } else if (o != null && this.getClass() == o.getClass()) {
+            Person person = (Person)o;
+            return Objects.equals(this.namePerson, person.namePerson) && Objects.equals(this.adresDostavki, person.adresDostavki) && Objects.equals(this.telefonNumber, person.telefonNumber);
+        } else {
+            return false;
+        }
     }
 
-    @Override
     public int hashCode() {
-        return Objects.hash(namePerson, adresDostavki, telefonNumber);
+        return Objects.hash(new Object[]{this.namePerson, this.adresDostavki, this.telefonNumber});
     }
 
-    @Override
     public String toString() {
-        return "Person{" +
-                "namePerson='" + namePerson + '\'' +
-                ", adresDostavki='" + adresDostavki + '\'' +
-                ", telefonNumber=" + telefonNumber +
-                '}';
+        return "Person{namePerson='" + namePerson + '\'' + ", adresDostavki='" + adresDostavki + '\'' + ", telefonNumber=" + telefonNumber;
     }
 }

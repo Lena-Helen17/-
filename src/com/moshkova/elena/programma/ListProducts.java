@@ -5,20 +5,13 @@ import java.util.Objects;
 
 public class ListProducts {
     private Product product;
-     private Integer count;
-     private final Double priceCheckList;
+    private Integer count;
+    private final Double priceCheckList;
 
     public ListProducts(Product product, Integer count) {
         this.product = product;
-//        if (product.getBalance() > count) {
-            this.count = count;
-//            product.setBalance(product.getBalance() - count);
-//        }
+        this.count = count;
         this.priceCheckList = product.getPrice();
-    }
-
-    public void addListProducts (List listProducts) {
-       //listProducts.add()
     }
 
     public Product getProduct() {
@@ -36,22 +29,18 @@ public class ListProducts {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ListProducts)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         ListProducts that = (ListProducts) o;
-        return Objects.equals(getProduct(), that.getProduct());
+        return product.equals(that.product);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getProduct());
+        return Objects.hash(product);
     }
 
-    @Override
     public String toString() {
-        return "ListProducts{" +
-                "product=" + product +
-                ", count=" + count +
-                ", priceCheckList=" + priceCheckList +
-                '}';
+        return "ListProducts{product=" + product + ", count=" + count + ", priceCheckList=" + priceCheckList ;
     }
 }
+
