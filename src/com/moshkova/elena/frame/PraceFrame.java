@@ -16,7 +16,7 @@ import java.util.*;
 
 public class PraceFrame extends JFrame {
 
-    public PraceFrame(ArrayList<Product> praceList, HashSet<ListProducts> listProduct,HashMap<Integer, Order> orderList ) {
+    public PraceFrame(ArrayList<Product> praceList, HashSet<ListProducts> listProduct,HashMap<Integer, Order> orderList, String disk ) {
         setTitle("Прайс Лист");
         setSize(new Dimension(800, 800));
 
@@ -69,10 +69,9 @@ public class PraceFrame extends JFrame {
             public void valueChanged(ListSelectionEvent e) {
 
                 int sellIndex = praceTable.getSelectedRow();
-//                TableModel model = praceTable.getModel();
-//                Object stroka = model.getValueAt(sellIndex,0);
+
                 Product productX = praceList.get(sellIndex);
-                listProduct.add(new ListProducts(productX, 1));
+                listProduct.add(new ListProducts(productX, 1, disk));
 
                 int x = listProduct.size();
                 korzinaText.setText(String.valueOf(x));
@@ -86,7 +85,7 @@ public class PraceFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                OrderFrame frame = new OrderFrame(listProduct, orderList);
+                OrderFrame frame = new OrderFrame(listProduct, orderList, disk);
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setVisible(true);
             }

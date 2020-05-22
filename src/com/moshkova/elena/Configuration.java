@@ -1,5 +1,4 @@
 package com.moshkova.elena;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -7,6 +6,8 @@ import java.util.Properties;
 public class Configuration {
 
     private static Configuration instance;
+   public  Properties defaultProperties;
+   public Properties personProperties;
 
     public static Configuration getInstance() {
         if (instance == null) {
@@ -22,12 +23,12 @@ public class Configuration {
 
     private Configuration() throws IOException{
         // запускаем настройки программы по умолчанию
-        Properties defaultProperties = new Properties();
+        defaultProperties = new Properties();
             defaultProperties.load(new FileInputStream("application.properties"));
 
 
         // загружаем настройки пользователя
-        Properties personProperties = new Properties(defaultProperties);
+        personProperties = new Properties(defaultProperties);
         try {
             personProperties.load(new FileInputStream("person1.properties"));
         } catch (IOException e) {
@@ -35,4 +36,7 @@ public class Configuration {
         }
 
     }
+
+
+
 }

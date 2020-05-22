@@ -22,20 +22,22 @@ public class Application {
 
     public static void main(String[] args) {
         Configuration propeties = Configuration.getInstance();
-        String cvsFileName = "product.csv";
+        String discount = propeties.personProperties.getProperty("discount");
+
+
 
         ReadCSVWithScanner readCSVFile = new ReadCSVWithScanner();
         ArrayList<Product> praceList = new ArrayList();
         readCSVFile.readCSV(praceList);
         Proverka.ProverkaListProduct(praceList);
 
-        ObjectWrite whiterOrderList = new ObjectWrite();
-        whiterOrderList.writer("orderList.dat", orderList);
         FileRead readOrderList = new FileRead();
-        HashMap<Integer, Order> orderListCopy = (HashMap)readOrderList.readGeneric("orderList.dat");
-        System.out.println(orderListCopy.toString());
+        HashMap<Integer, Order> orderList = (HashMap)readOrderList.readGeneric("orderList.dat");
+        System.out.println(orderList.toString());
 
-        PraceFrame framePrace = new PraceFrame(praceList, set, orderList);
+
+
+        PraceFrame framePrace = new PraceFrame(praceList, set, orderList, discount);
         framePrace.setDefaultCloseOperation(3);
         framePrace.setVisible(true);
     }

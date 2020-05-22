@@ -31,7 +31,7 @@ public class BasketFrame extends JFrame {
                 String[] str = new String[3];
             str[0] = x.getProduct().getName();
             str[1] = String.valueOf(x.getCount());
-            str[2] = String.valueOf(x.getPriceCheckList());
+            str[2] = String.valueOf(x.getOrderPrice());
             btm.addDate(str);
                 System.out.println(str[0]);
             }

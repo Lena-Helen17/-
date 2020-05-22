@@ -1,17 +1,25 @@
 package com.moshkova.elena.programma;
 
+import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Objects;
 
-public class ListProducts {
+public class ListProducts implements Serializable {
     private Product product;
     private Integer count;
     private final Double priceCheckList;
+    private Double orderPrice;
+  //  String formattedDouble = new DecimalFormat("#0.00").format(orderPrice);
+    private Double discount;
 
-    public ListProducts(Product product, Integer count) {
+
+    public ListProducts(Product product, Integer count, String dist) {
         this.product = product;
         this.count = count;
-        this.priceCheckList = product.getPrice();
+        priceCheckList = product.getPrice();
+        discount = Double.parseDouble(dist);
+        orderPrice = priceCheckList * count * ((100 - discount)/100.0);
     }
 
     public Product getProduct() {
@@ -22,8 +30,15 @@ public class ListProducts {
         return count;
     }
 
-    public Double getPriceCheckList() {
-        return priceCheckList;
+    public void setCount(Integer count) {
+        if (count > 0) {
+        this.count = count;
+        orderPrice = priceCheckList * count  * ((100 - discount)/100.0);
+        }
+    }
+
+    public Double getOrderPrice() {
+        return orderPrice;
     }
 
     @Override
@@ -40,7 +55,7 @@ public class ListProducts {
     }
 
     public String toString() {
-        return "ListProducts{product=" + product + ", count=" + count + ", priceCheckList=" + priceCheckList ;
+        return "ListProducts{product=" + product + ", count=" + count + ", priceCheckList=" + orderPrice ;
     }
 }
 

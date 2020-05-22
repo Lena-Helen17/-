@@ -1,8 +1,9 @@
 package com.moshkova.elena.programma;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Person {
+public class Person implements Serializable {
     private String namePerson;
     private String adresDostavki;
     private String telefonNumber;

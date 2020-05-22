@@ -50,6 +50,5 @@ public class ReadCSVWithScanner {
     }  catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(empList);
     }
 }

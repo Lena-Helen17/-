@@ -1,49 +1,74 @@
 package com.moshkova.elena.frame;
 
+import com.moshkova.elena.programma.ListProducts;
+
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
+import java.util.List;
 
 public class OrderModel extends AbstractTableModel {
     public static final long seriaVersion = 4735890989L;
-    private int columnCount = 3;
-    private ArrayList<String []> dataAarrayList;
+    protected static final String COLUMNN_NAMES[] = {"Продукт", "Количество", "Цена"};
 
-    public OrderModel() {
-        dataAarrayList = new ArrayList<>();
-        for(int i = 0; i < dataAarrayList.size(); i++){
-            dataAarrayList.add(new String[getColumnCount()]);
+    private List<ListProducts> listProductsList;
+
+    public OrderModel(List<ListProducts> listProductsList) {
+        this.listProductsList = new ArrayList<>(listProductsList);
         }
 
+    public ListProducts getListProductsAt(int row) {
+        return listProductsList.get(row);
+    }
+
+    public void removeRow(int row) {
+        listProductsList.remove(row);
     }
 
     @Override
     public int getRowCount() {
-        return dataAarrayList.size();
+        return listProductsList.size();
     }
 
     @Override
     public int getColumnCount() {
-        return columnCount;
+        return COLUMNN_NAMES.length;
+    }
+
+    @Override
+    public String getColumnName(int column) {
+        return COLUMNN_NAMES[column];
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        String[] rows = dataAarrayList.get(rowIndex);
-        return rows[columnIndex];
-    }
-    @Override
-    public String getColumnName(int columnIndexc) {
-        switch (columnIndexc) {
-            case 0: return "Продукт";
-            case 1: return "Количество";
-            case 2: return "Цена";
+        ListProducts listProducts = listProductsList.get(rowIndex);
+        Object value = null;
+        switch (columnIndex) {
+            case 0:
+                value = listProducts.getProduct();
+                break;
+            case 1:
+                value = listProducts.getCount();
+                break;
+            case 2:
+                value = listProducts.getOrderPrice();
+                break;
         }
-        return "";
+        return value;
     }
 
-    public void addDate(String[] row) {
-        String[] rowTable = new String [getColumnCount()];
-        rowTable =row;
-        dataAarrayList.add(rowTable);
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        if(columnIndex == 1) {
+            ListProducts listProducts = listProductsList.get(rowIndex);
+            listProducts.setCount((Integer)aValue);
+            super.setValueAt(aValue, rowIndex, columnIndex);
+            fireTableCellUpdated(rowIndex,columnIndex);
+        }
+    }
+
+    public void update (ListProducts listProducts) {
+        int row = listProductsList.indexOf(listProducts);
+        fireTableRowsUpdated(row, row);
     }
 }
