@@ -1,9 +1,9 @@
 package com.moshkova.elena.frame;
 
 import com.moshkova.elena.programma.Order;
-
-
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import  javax.swing.*;
 
@@ -44,6 +44,22 @@ public class OrderListFrame extends JFrame{
 
         add(panelListOrder);
         pack();
+
+        inButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = listOrderTable.getSelectedRow();
+                if (selectedRow >= 0) {
+                   Integer x = Integer.valueOf((String) model.getValueAt(selectedRow,0));
+                    System.out.println(x);
+                    Order orderX = orderList.get(x);
+                OrderFrame frame = new OrderFrame(orderX, x, orderList);
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setVisible(true);
+                dispose();
+                }
+            }
+        });
 
 
     }

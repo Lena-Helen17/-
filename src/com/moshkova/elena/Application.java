@@ -30,15 +30,15 @@ public class Application {
         readCSVFile.readCSV(praceList);
         Proverka.ProverkaListProduct(praceList);
 
-//        FileRead readOrderList = new FileRead();
-//        HashMap<Integer, Order> orderList = (HashMap)readOrderList.readGeneric("orderList.dat");
-        //System.out.println(orderList.toString());
-
         startFlamePrace();
     }
 
     public static void startFlamePrace() {
         set = new HashSet();
+        FileRead readOrderList = new FileRead();
+        HashMap<Integer, Order> orderList = (HashMap)readOrderList.readGeneric("orderList.dat");
+        //System.out.println(orderList.toString());
+
         PraceFrame framePrace = new PraceFrame(praceList, set, orderList, discount);
         framePrace.setDefaultCloseOperation(3);
         framePrace.setVisible(true);

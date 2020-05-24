@@ -107,10 +107,5 @@ public class PraceFrame extends JFrame {
                 dispose();
             }
         });
-
-
-
         }
-
-
 }
