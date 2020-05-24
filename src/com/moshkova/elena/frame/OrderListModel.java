@@ -1,14 +1,19 @@
 package com.moshkova.elena.frame;
 
+import com.moshkova.elena.programma.ListProducts;
+import com.moshkova.elena.programma.Order;
+
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
-public class BasketListModel extends AbstractTableModel {
-    public static final long seriaVersion = 473548925989L;
+public class OrderListModel extends AbstractTableModel {
+    public static final long seriaVersion = 4735989L;
     private int columnCount = 3;
-private ArrayList<String []> dataAarrayList;
+    private ArrayList<String []> dataAarrayList;
 
-    public BasketListModel() {
+    public OrderListModel() {
         dataAarrayList = new ArrayList<>();
         for(int i = 0; i < dataAarrayList.size(); i++){
             dataAarrayList.add(new String[getColumnCount()]);
@@ -35,19 +40,16 @@ private ArrayList<String []> dataAarrayList;
     @Override
     public String getColumnName(int columnIndexc) {
         switch (columnIndexc) {
-            case 0: return "Продукт";
-            case 1: return "Количество";
-            case 2: return "Цена";
-        }
+            case 0: return "Номер заказа";
+            case 1: return "Дата создания";
+            case 2: return "Владелец";
+            }
         return "";
     }
 
-    public void addDate(String[]
-                                row) {
+    public void addDate(String[] row) {
         String[] rowTable = new String [getColumnCount()];
         rowTable =row;
         dataAarrayList.add(rowTable);
     }
-   // int sel = 0; // или номер строки или getSelestedRow
-    // model.removeRow(sel); // удаление выбранной строки
 }

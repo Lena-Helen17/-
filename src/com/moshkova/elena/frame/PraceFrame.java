@@ -16,7 +16,8 @@ import java.util.*;
 
 public class PraceFrame extends JFrame {
 
-    public PraceFrame(ArrayList<Product> praceList, HashSet<ListProducts> listProduct,HashMap<Integer, Order> orderList, String disk ) {
+    public PraceFrame(LinkedHashSet<Product> praceSet, HashSet<ListProducts> listProduct,HashMap<Integer, Order> orderList, String disk ) {
+        ArrayList<Product> praceList = new ArrayList<>(praceSet);
         setTitle("Прайс Лист");
         setSize(new Dimension(800, 800));
 
@@ -42,6 +43,8 @@ public class PraceFrame extends JFrame {
         JButton inButton = new JButton("Оформить заказ");
         JLabel korzina = new JLabel("Корзина");
         JTextField korzinaText = new JTextField(5);
+        JButton orderListButton = new JButton("Открыть список заказов");
+        orderListButton.setBackground(Color.GREEN);
 
 
         panelPrace.add(pracetListScrollPane, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.9,
@@ -54,6 +57,9 @@ public class PraceFrame extends JFrame {
                 GridBagConstraints.WEST, GridBagConstraints.CENTER,
                 new Insets(2, 2, 2, 2), 0, 0));
         panelPrace.add(korzinaText, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.9,
+                GridBagConstraints.WEST, GridBagConstraints.CENTER,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelPrace.add(orderListButton, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.9,
                 GridBagConstraints.WEST, GridBagConstraints.CENTER,
                 new Insets(2, 2, 2, 2), 0, 0));
 
@@ -88,6 +94,17 @@ public class PraceFrame extends JFrame {
                 OrderFrame frame = new OrderFrame(listProduct, orderList, disk);
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setVisible(true);
+                dispose();
+            }
+        });
+
+        orderListButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                OrderListFrame frame = new OrderListFrame(orderList);
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setVisible(true);
+                dispose();
             }
         });
 

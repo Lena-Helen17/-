@@ -1,5 +1,6 @@
 package com.moshkova.elena.frame;
 
+import com.moshkova.elena.Application;
 import com.moshkova.elena.Configuration;
 import com.moshkova.elena.programma.ListProducts;
 import com.moshkova.elena.programma.Order;
@@ -256,7 +257,8 @@ public class OrderFrame extends JFrame {
                 whiterOrderList.writer("orderList.dat", orderList);
 
 
-                System.exit(1);
+                Application.startFlamePrace();
+                dispose();
 
             }
         });

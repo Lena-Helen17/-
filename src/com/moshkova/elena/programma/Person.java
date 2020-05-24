@@ -54,6 +54,6 @@ public class Person implements Serializable {
     }
 
     public String toString() {
-        return "Person{namePerson='" + namePerson + '\'' + ", adresDostavki='" + adresDostavki + '\'' + ", telefonNumber=" + telefonNumber;
+        return  namePerson + '\''  + adresDostavki + '\'' + telefonNumber;
     }
 }

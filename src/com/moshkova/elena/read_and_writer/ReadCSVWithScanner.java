@@ -5,11 +5,12 @@ import com.moshkova.elena.programma.Product;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Scanner;
 
 public class ReadCSVWithScanner {
-    public void readCSV (List<Product> empList) {
+    public void readCSV (LinkedHashSet<Product> empList) {
         // открываем файл
         try {
             BufferedReader reader = new BufferedReader(new FileReader(
