@@ -10,7 +10,7 @@ import java.util.List;
 
 public class OrderListModel extends AbstractTableModel {
     public static final long seriaVersion = 4735989L;
-    private int columnCount = 3;
+    private int columnCount = 4;
     private ArrayList<String []> dataAarrayList;
 
     public OrderListModel() {
@@ -43,6 +43,7 @@ public class OrderListModel extends AbstractTableModel {
             case 0: return "Номер заказа";
             case 1: return "Дата создания";
             case 2: return "Владелец";
+            case 3: return "Статус";
             }
         return "";
     }

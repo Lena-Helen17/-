@@ -1,31 +1,30 @@
 package com.moshkova.elena.frame;
 
 import com.moshkova.elena.Application;
-import com.moshkova.elena.Configuration;
+
 import com.moshkova.elena.programma.ListProducts;
 import com.moshkova.elena.programma.Order;
 import com.moshkova.elena.programma.Person;
 import com.moshkova.elena.programma.Product;
-import com.moshkova.elena.read_and_writer.FileRead;
+
+import com.moshkova.elena.read_and_writer.FileWrite;
 import com.moshkova.elena.read_and_writer.ObjectWrite;
 
+
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.List;
+
 
 public class OrderFrame extends JFrame {
     LocalDate dataStart = LocalDate.now();
     Double summa = 0.0;
     Short discaunt = 0;
+    JFrame frameNo = new JFrame("Нет в наличие:");
 
     public OrderFrame(HashSet<ListProducts> hashSetProducts, HashMap<Integer, Order> orderList, String dis)  {
         ArrayList<ListProducts> listProductsList = new ArrayList<>(hashSetProducts);
@@ -279,9 +278,13 @@ public class OrderFrame extends JFrame {
                 new Insets(2, 2, 2, 2), 0, 0));
         pack();
     }
-    public OrderFrame(Order order, Integer x, HashMap<Integer, Order> orderList)  {
+    public OrderFrame(Order order, Integer x, HashMap<Integer, Order> orderList, LinkedHashSet<Product> praceList)  {
         discaunt = order.getDiscount();
-        System.out.println(discaunt);
+        HashMap<Long, Product> praceMap = new HashMap<>();
+        for(Product product : praceList) {
+            Long key = product.getId();
+            praceMap.put(key,product);
+        }
         setTitle("Форма заказа");
         setSize(new Dimension(900, 400));
         setLayout(new GridBagLayout());
@@ -375,7 +378,7 @@ public class OrderFrame extends JFrame {
         JButton plusButton = new JButton("+");
         JButton minusButton = new JButton("-");
         JLabel vsego = new JLabel("                              Общая сумма:");
-        JTextField vsegoText = new JTextField(10);
+        JLabel vsegoText = new JLabel(String.valueOf(summa));
         //Обновление суммы
         for (ListProducts product : order.getListProductsList()) {
             summa = summa + product.getOrderPrice();
@@ -419,6 +422,7 @@ public class OrderFrame extends JFrame {
                         summa = summa + product.getOrderPrice();
                     }
                     vsegoText.setText(String.valueOf(summa));
+
                 }
             }
         });
@@ -511,10 +515,44 @@ public class OrderFrame extends JFrame {
                 statucText.setText(menuItem1.getText());
             }
         });
+
+        frameNo.setLayout(new GridLayout(0,1,0,0));
+        frameNo.setSize(500,500);
+
         menuItem2.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 statucText.setText(menuItem2.getText());
+                for(int i = 0; i < order.getListProductsList().size(); i++) {
+                    ListProducts product = order.getListProductsList().get(i);
+                    Long key = order.getListProductsList().get(i).getProduct().getId();
+                    Product productPrace = praceMap.get(key);
+                    if(product.getCount()>productPrace.getBalance()) {
+                        JLabel label = new JLabel("Не хватает товара на складе: " + productPrace.getName() + " на складе " + productPrace.getBalance());
+                        label.setForeground(Color.RED);
+                        frameNo.add(label);
+                    } else
+                    {
+                        productPrace.setBalance(productPrace.getBalance() - product.getCount());
+                        HashSet<Product> praceX = new HashSet<>();
+                        for(HashMap.Entry<Long, Product> pair : praceMap.entrySet()){
+                             praceX.add(pair.getValue());
+                        }
+                        FileWrite fileWrite = new FileWrite();
+                        fileWrite.CvsWriter("product.csv", praceX);
+                        JLabel label = new JLabel("Продукт отгружен: " + productPrace.getName());
+                        frameNo.add(label);
+                    }
+
+                }
+                Order order1 = new Order(dataOrderText.getText(), new Person(namePersonText.getText(), adresDostavkiText.getText(), telefonNumberText.getText()),
+                        discaunt, "Отгружен", order.getListProductsList());
+                orderList.put(x, order1);
+                ObjectWrite whiterOrderList = new ObjectWrite();
+                whiterOrderList.writer("orderList.dat", orderList);
+                frameNo.setDefaultCloseOperation(3);
+                frameNo.setVisible(true);
+                setVisible(false);
             }
         });
         menuItem3.addActionListener(new AbstractAction() {
@@ -532,5 +570,17 @@ public class OrderFrame extends JFrame {
                 statucText.setEnabled(false);
             }
         });
+        if (order.getStatusOrder().equals("Отменён")||
+            order.getStatusOrder().equals("Отгружен")) {
+            namePersonText.setEnabled(false);
+            adresDostavkiText.setEnabled(false);
+            telefonNumberText.setEnabled(false);
+            dataOrderText.setEnabled(false);
+            placeText.setEnabled(false);
+            deletButton.setEnabled(false);
+            plusButton.setEnabled(false);
+            minusButton.setEnabled(false);
+            statucText.setEnabled(false);
+        }
     }
 }

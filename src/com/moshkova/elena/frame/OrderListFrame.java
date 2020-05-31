@@ -1,15 +1,18 @@
 package com.moshkova.elena.frame;
 
 import com.moshkova.elena.programma.Order;
+import com.moshkova.elena.programma.Product;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import  javax.swing.*;
 
 public class OrderListFrame extends JFrame{
 
-    public OrderListFrame(HashMap<Integer, Order> orderList) {
+    public OrderListFrame(HashMap<Integer, Order> orderList, LinkedHashSet<Product> praceList) {
         setTitle("Список заказов");
         setSize(800, 800);
 
@@ -24,10 +27,11 @@ public class OrderListFrame extends JFrame{
         //orderListScrollPane.setPreferredSize(new Dimension(600, 600));
 
         for (HashMap.Entry<Integer, Order> pair : orderList.entrySet()) {
-            String[] str = new String[3];
+            String[] str = new String[4];
             str[0] = String.valueOf(pair.getKey());
             str[1] = String.valueOf(pair.getValue().getDataStart());
             str[2] = pair.getValue().getPerson().toString();
+            str[3] = pair.getValue().getStatusOrder();
             model.addDate(str);
         }
 
@@ -53,7 +57,7 @@ public class OrderListFrame extends JFrame{
                    Integer x = Integer.valueOf((String) model.getValueAt(selectedRow,0));
                     System.out.println(x);
                     Order orderX = orderList.get(x);
-                OrderFrame frame = new OrderFrame(orderX, x, orderList);
+                OrderFrame frame = new OrderFrame(orderX, x, orderList, praceList);
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setVisible(true);
                 dispose();

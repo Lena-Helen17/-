@@ -80,6 +80,6 @@ public class Product implements Serializable {
 
     @Override
     public String toString() {
-        return "\n" + id + ";" + nameProduct + "; " + price + " rub. ; " + balance + " kol." ;
+        return ( id + ";" + nameProduct + ";" + color + ";" +price + ";" + balance + "\n");
     }
 }

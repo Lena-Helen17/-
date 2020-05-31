@@ -29,7 +29,6 @@ public class Application {
         ReadCSVWithScanner readCSVFile = new ReadCSVWithScanner();
         readCSVFile.readCSV(praceList);
         Proverka.ProverkaListProduct(praceList);
-
         startFlamePrace();
     }
 

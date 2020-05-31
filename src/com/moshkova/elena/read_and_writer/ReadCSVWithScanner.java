@@ -36,8 +36,12 @@ public class ReadCSVWithScanner {
                     product.setColor(text);
                 else if (index == 3)
                     product.setPrice(Double.parseDouble(text));
-                else if (index == 4)
-                    product.setBalance(Integer.parseInt(text));
+                else if (index == 4) {
+                    if (text.equals("null")) {
+                        product.setBalance(0);
+                    }else
+                        product.setBalance(Integer.parseInt(text));
+                }
                 else
                     System.out.println("Некорректные данные::" + text);
                 index++;

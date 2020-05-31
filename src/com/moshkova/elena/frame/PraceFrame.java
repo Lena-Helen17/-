@@ -101,7 +101,7 @@ public class PraceFrame extends JFrame {
         orderListButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                OrderListFrame frame = new OrderListFrame(orderList);
+                OrderListFrame frame = new OrderListFrame(orderList,praceSet);
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setVisible(true);
                 dispose();
