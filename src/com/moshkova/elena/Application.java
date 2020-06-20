@@ -1,14 +1,12 @@
 package com.moshkova.elena;
 
-import com.moshkova.elena.frame.OrderFrame;
-import com.moshkova.elena.frame.PraceFrame;
-import com.moshkova.elena.programma.*;
-import com.moshkova.elena.read_and_writer.*;
+import com.moshkova.elena.files.Storage;
+import com.moshkova.elena.gui.PraceFrame;
+import com.moshkova.elena.models.*;
+import com.moshkova.elena.files.read_and_writer_file.*;
 
 
-import javax.swing.*;
-import java.io.IOException;
-import java.time.LocalDate;
+
 import java.util.*;
 
 
@@ -26,8 +24,8 @@ public class Application {
 
 
 
-        ReadCSVWithScanner readCSVFile = new ReadCSVWithScanner();
-        readCSVFile.readCSV(praceList);
+        Storage reader = new FiieReader();
+        reader.readCSV(praceList);
         Proverka.ProverkaListProduct(praceList);
         startFlamePrace();
     }
