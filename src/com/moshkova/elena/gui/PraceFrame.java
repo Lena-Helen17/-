@@ -1,5 +1,8 @@
 package com.moshkova.elena.gui;
 
+import com.moshkova.elena.Application;
+import com.moshkova.elena.files.read_and_writer_file.BD.BDReader;
+import com.moshkova.elena.files.read_and_writer_file.BD.Dao.ListProductsDao;
 import com.moshkova.elena.models.ListProducts;
 import com.moshkova.elena.models.Order;
 import com.moshkova.elena.models.Product;
@@ -73,15 +76,25 @@ public class PraceFrame extends JFrame {
             @Override
             public void valueChanged(ListSelectionEvent e) {
 
+                if (e.getValueIsAdjusting() == false) {
+
                 int sellIndex = praceTable.getSelectedRow();
 
                 Product productX = praceList.get(sellIndex);
                 listProduct.add(new ListProducts(productX, 1, disk));
 
+                if (Application.reader instanceof BDReader) {
+                    Integer dickaunt = Integer.parseInt(disk);
+                    Double orderPrice = productX.getPrice() * ((100 - dickaunt)/100.0);
+                    Long idProduct = productX.getId();
+                    ListProductsDao listProductsDao = new ListProductsDao();
+                    listProductsDao.save(idProduct, 1, dickaunt, orderPrice);
+                }
+
                 int x = listProduct.size();
                 korzinaText.setText(String.valueOf(x));
                 korzinaText.setEnabled(false);
-            }
+            }}
 
         });
 

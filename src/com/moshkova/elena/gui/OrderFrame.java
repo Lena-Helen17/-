@@ -2,19 +2,25 @@ package com.moshkova.elena.gui;
 
 import com.moshkova.elena.Application;
 
+import com.moshkova.elena.files.FileReader;
+import com.moshkova.elena.files.read_and_writer_file.BD.BDReader;
+import com.moshkova.elena.files.read_and_writer_file.BD.ConnectionManadger;
+import com.moshkova.elena.files.read_and_writer_file.BD.Dao.ListProductsDao;
+import com.moshkova.elena.files.read_and_writer_file.BD.Dao.OrderDao;
 import com.moshkova.elena.models.ListProducts;
 import com.moshkova.elena.models.Order;
 import com.moshkova.elena.models.Person;
 import com.moshkova.elena.models.Product;
-
-import com.moshkova.elena.files.read_and_writer_file.FileWrite;
-import com.moshkova.elena.files.read_and_writer_file.ObjectWrite;
 
 
 import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -183,8 +189,16 @@ public class OrderFrame extends JFrame {
                     if(selectedRow >= 0) {
                         selectedRow = productListTable.convertRowIndexToModel(selectedRow);
                         ListProducts listProducts = model.getListProductsAt(selectedRow);
-                        listProducts.setCount(listProducts.getCount() + 1);
+                        Long idProd  =  listProductsList.get(selectedRow).getProduct().getId();                  //BD
+                        Integer count = listProducts.getCount() + 1 ;
+                        listProducts.setCount(count);
+                        Double pricePr = listProducts.getOrderPrice();
                         model.update(listProducts);
+
+                        if (Application.reader instanceof BDReader) {                                             //BD
+                            ListProductsDao listProductsDao = new ListProductsDao();
+                            listProductsDao.update(idProd, count, pricePr );
+                        }
                         //Обновление суммы
                         summa = 0.0;
                         for (ListProducts product : listProductsList) {
@@ -202,7 +216,15 @@ public class OrderFrame extends JFrame {
                         selectedRow = productListTable.convertRowIndexToModel(selectedRow);
                         ListProducts listProducts = model.getListProductsAt(selectedRow);
                         listProducts.setCount(listProducts.getCount() - 1);
+                        Long idProd  =  listProducts.getProduct().getId();
+                        Integer count = listProducts.getCount();
+                        Double pricePr = listProducts.getOrderPrice();
                         model.update(listProducts);
+
+                        if (Application.reader instanceof BDReader) {
+                            ListProductsDao listProductsDao = new ListProductsDao();
+                            listProductsDao.update(idProd, count, pricePr );
+                        }
                         //Обновление суммы
                         summa = 0.0;
                         for (ListProducts product : listProductsList) {
@@ -219,8 +241,14 @@ public class OrderFrame extends JFrame {
                 int selectedRow = productListTable.getSelectedRow();
                 if (selectedRow >= 0) {
                     selectedRow = productListTable.convertRowIndexToModel(selectedRow);
+                    Long idProd  =  listProductsList.get(selectedRow).getProduct().getId();
                     listProductsList.remove(selectedRow);
                     model.removeRow(selectedRow);
+                    System.out.println(selectedRow);
+                  if (Application.reader instanceof BDReader) {
+                        ListProductsDao listProductsDao = new ListProductsDao();
+                        listProductsDao.delete(idProd);
+                   }
                     //Обновление суммы
                     summa = 0.0;
                     for (ListProducts product : listProductsList) {
@@ -246,15 +274,23 @@ public class OrderFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                Order order1 = new Order(dataOrderText.getText(), new Person(namePersonText.getText(), adresDostavkiText.getText(), telefonNumberText.getText()),
-                        discaunt, statucText.getText(), listProductsList);
-                Integer x =  orderList.size() +1;
-                System.out.println(x);
-                orderList.put(x, order1);
+                if (Application.reader instanceof FileReader) {
+                    Order order1 = new Order(dataOrderText.getText(), new Person(namePersonText.getText(), adresDostavkiText.getText(), telefonNumberText.getText()),
+                            discaunt, statucText.getText(), listProductsList);
+                    Integer x = orderList.size() + 1;
+                    System.out.println(x);
+                    orderList.put(x, order1);
 
-                ObjectWrite whiterOrderList = new ObjectWrite();
-                whiterOrderList.writer("orderList.dat", orderList);
-
+                    Application.reader.writer("orderList.dat", orderList);
+                }
+                else {
+                    OrderDao orderDao = new OrderDao();
+                    orderDao.save(namePersonText.getText(), adresDostavkiText.getText(), telefonNumberText.getText(), dataOrderText.getText(),statucText.getText());
+                    Integer contStrok = orderDao.countStroc();
+                    ListProductsDao listProductsDao = new ListProductsDao();
+                    listProductsDao.copy(contStrok);
+                    listProductsDao.deleteAll();
+                }
 
                 Application.startFlamePrace();
                 dispose();
@@ -280,7 +316,7 @@ public class OrderFrame extends JFrame {
     }
     public OrderFrame(Order order, Integer x, HashMap<Integer, Order> orderList, LinkedHashSet<Product> praceList)  {
         discaunt = order.getDiscount();
-        HashMap<Long, Product> praceMap = new HashMap<>();
+        HashMap<Long, Product> praceMap = Application.reader.newMap();
         for(Product product : praceList) {
             Long key = product.getId();
             praceMap.put(key,product);
@@ -415,6 +451,15 @@ public class OrderFrame extends JFrame {
                     selectedRow = productListTable.convertRowIndexToModel(selectedRow);
                     ListProducts listProducts = model.getListProductsAt(selectedRow);
                     listProducts.setCount(listProducts.getCount() + 1);
+
+                    Long idProd  =  listProducts.getProduct().getId();
+                    Integer count = listProducts.getCount();
+                    Double pricePr = listProducts.getOrderPrice();
+
+                    if (Application.reader instanceof BDReader) {
+                        ListProductsDao listProductsDao = new ListProductsDao();
+                        listProductsDao.update2(idProd, count, pricePr, x );
+                    }
                     model.update(listProducts);
                     //Обновление суммы
                     summa = 0.0;
@@ -434,6 +479,15 @@ public class OrderFrame extends JFrame {
                     selectedRow = productListTable.convertRowIndexToModel(selectedRow);
                     ListProducts listProducts = model.getListProductsAt(selectedRow);
                     listProducts.setCount(listProducts.getCount() - 1);
+
+                    Long idProd  =  listProducts.getProduct().getId();
+                    Integer count = listProducts.getCount();
+                    Double pricePr = listProducts.getOrderPrice();
+
+                    if (Application.reader instanceof BDReader) {
+                        ListProductsDao listProductsDao = new ListProductsDao();
+                        listProductsDao.update2(idProd, count, pricePr, x );
+                    }
                     model.update(listProducts);
                     //Обновление суммы
                     summa = 0.0;
@@ -451,6 +505,14 @@ public class OrderFrame extends JFrame {
                 int selectedRow = productListTable.getSelectedRow();
                 if (selectedRow >= 0) {
                     selectedRow = productListTable.convertRowIndexToModel(selectedRow);
+
+                    Long idProd  =  model.getListProductsAt(selectedRow).getProduct().getId();
+
+                    if (Application.reader instanceof BDReader) {
+                        ListProductsDao listProductsDao = new ListProductsDao();
+                        listProductsDao.delete2(idProd, x);
+                    }
+
                     order.getListProductsList().remove(selectedRow);
                     model.removeRow(selectedRow);
                     //Обновление суммы
@@ -476,22 +538,32 @@ public class OrderFrame extends JFrame {
 
         panelDown.add(saveButton);
         saveButton.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+                  @Override
+        public void actionPerformed(ActionEvent e) {
 
+            if (Application.reader instanceof FileReader) {
                 Order order1 = new Order(dataOrderText.getText(), new Person(namePersonText.getText(), adresDostavkiText.getText(), telefonNumberText.getText()),
                         discaunt, statucText.getText(), order.getListProductsList());
+                Integer x = orderList.size() + 1;
+                System.out.println(x);
                 orderList.put(x, order1);
 
-                ObjectWrite whiterOrderList = new ObjectWrite();
-                whiterOrderList.writer("orderList.dat", orderList);
-
-
-                Application.startFlamePrace();
-                dispose();
-
+                Application.reader.writer("orderList.dat", orderList);
             }
-        });
+//            else {
+//                OrderDao orderDao = new OrderDao();
+//                orderDao.save(namePersonText.getText(), adresDostavkiText.getText(), telefonNumberText.getText(), dataOrderText.getText(),statucText.getText());
+//                Integer contStrok = orderDao.countStroc();
+//                ListProductsDao listProductsDao = new ListProductsDao();
+//                listProductsDao.copy(contStrok);
+//                listProductsDao.deleteAll();
+//            }
+
+            Application.startFlamePrace();
+            dispose();
+
+        }
+    });
 
         //________________________________________________
 
@@ -533,13 +605,13 @@ public class OrderFrame extends JFrame {
                         frameNo.add(label);
                     } else
                     {
-                        productPrace.setBalance(productPrace.getBalance() - product.getCount());
+                        Application.reader.setBalanceStorage((productPrace.getBalance() - product.getCount()), productPrace);
                         HashSet<Product> praceX = new HashSet<>();
                         for(HashMap.Entry<Long, Product> pair : praceMap.entrySet()){
                              praceX.add(pair.getValue());
                         }
-                        FileWrite fileWrite = new FileWrite();
-                        fileWrite.CvsWriter("product.csv", praceX);
+
+                        Application.reader.CvsWriter("product.csv", praceX);              // Обновляет прайс лист(с измененным остатком на складе)
                         JLabel label = new JLabel("Продукт отгружен: " + productPrace.getName());
                         frameNo.add(label);
                     }
@@ -548,8 +620,12 @@ public class OrderFrame extends JFrame {
                 Order order1 = new Order(dataOrderText.getText(), new Person(namePersonText.getText(), adresDostavkiText.getText(), telefonNumberText.getText()),
                         discaunt, "Отгружен", order.getListProductsList());
                 orderList.put(x, order1);
-                ObjectWrite whiterOrderList = new ObjectWrite();
-                whiterOrderList.writer("orderList.dat", orderList);
+                if (Application.reader instanceof BDReader) {
+                    OrderDao orderDao = new OrderDao();
+                    orderDao.update(x, "Отгружен");
+                }
+
+                Application.reader.writer("orderList.dat", orderList);
                 frameNo.setDefaultCloseOperation(3);
                 frameNo.setVisible(true);
                 setVisible(false);

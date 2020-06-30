@@ -6,11 +6,18 @@ import java.util.Objects;
 public class ListProducts implements Serializable {
     private Product product;
     private Integer count;
-    private final Double priceCheckList;
+    private Double priceCheckList;
     private Double orderPrice;
   //  String formattedDouble = new DecimalFormat("#0.00").format(orderPrice);
     private Double discount;
 
+    public ListProducts(Product product, Integer count, Double orderPrice, Double discount ){
+        this.count = count;
+        this.discount = discount;
+        this.product = product;
+        this.orderPrice = orderPrice;
+        priceCheckList = product.getPrice();
+    };
 
     public ListProducts(Product product, Integer count, String dist) {
         this.product = product;
