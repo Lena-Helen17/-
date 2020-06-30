@@ -1,0 +1,662 @@
+package com.moshkova.elena.gui;
+
+import com.moshkova.elena.Application;
+
+import com.moshkova.elena.files.FileReader;
+import com.moshkova.elena.files.read_and_writer_file.BD.BDReader;
+import com.moshkova.elena.files.read_and_writer_file.BD.ConnectionManadger;
+import com.moshkova.elena.files.read_and_writer_file.BD.Dao.ListProductsDao;
+import com.moshkova.elena.files.read_and_writer_file.BD.Dao.OrderDao;
+import com.moshkova.elena.models.ListProducts;
+import com.moshkova.elena.models.Order;
+import com.moshkova.elena.models.Person;
+import com.moshkova.elena.models.Product;
+
+
+import javax.swing.*;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+
+
+public class OrderFrame extends JFrame {
+    LocalDate dataStart = LocalDate.now();
+    Double summa = 0.0;
+    Short discaunt = 0;
+    JFrame frameNo = new JFrame("Нет в наличие:");
+
+    public OrderFrame(HashSet<ListProducts> hashSetProducts, HashMap<Integer, Order> orderList, String dis)  {
+        ArrayList<ListProducts> listProductsList = new ArrayList<>(hashSetProducts);
+        discaunt = Short.valueOf(dis);
+        setTitle("Форма заказа");
+        setSize(new Dimension(900, 400));
+        setLayout(new GridBagLayout());
+
+        //______________________________________________________   данные о персоне
+        JPanel panelPerson = new JPanel();
+       // panelPerson.setBackground(Color.CYAN);
+        panelPerson.setLayout(new GridBagLayout());
+
+        JLabel namePerson = new JLabel("Фамилия и имя:");
+        JLabel adresDostavki = new JLabel("Адрес:");
+        JLabel telefonNumber = new JLabel("Номер телефона:");
+        JTextField namePersonText = new JTextField(20);
+        JTextField adresDostavkiText = new JTextField();
+        JTextField telefonNumberText = new JTextField();
+
+
+        panelPerson.add(namePerson, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelPerson.add(namePersonText, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelPerson.add(adresDostavki, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelPerson.add(adresDostavkiText, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelPerson.add(telefonNumber, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelPerson.add(telefonNumberText, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+
+//------------------------------------------------------  информационная панель
+        JPanel panelInfo = new JPanel();
+        //panelInfo.setBackground(Color.RED);
+        panelInfo.setLayout(new GridBagLayout());
+
+        JLabel dataOrder = new JLabel("Дата создания заказа:");
+        JLabel place = new JLabel("Процент скидки:");
+        //JCheckBox placeYes = new JCheckBox();
+        JLabel statuc = new JLabel("Статус заказа:");
+        JTextField dataOrderText = new JTextField(10);
+        JTextField placeText = new JTextField(10);
+        placeText.setText(dis);
+        JMenuBar menuBar = new JMenuBar();
+        JMenu statucText = new JMenu("                     ");
+        JMenuItem menuItem1 = new JMenuItem("Готовится");
+        JMenuItem menuItem2 = new JMenuItem("Отгружен");
+        JMenuItem menuItem3 = new JMenuItem("Отменён");
+        statucText.add(menuItem1);
+        statucText.add(menuItem2);
+        statucText.add(menuItem3);
+        menuBar.add(statucText);
+
+
+        panelInfo.add(dataOrder, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelInfo.add(dataOrderText, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelInfo.add(place, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelInfo.add(placeText, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+//        panelInfo.add(placeYes, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.9,
+//                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+//                new Insets(2, 2, 2, 2), 0, 0));
+        panelInfo.add(statuc, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelInfo.add(menuBar, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+
+        dataOrderText.setText(this.dataStart.format(DateTimeFormatter.ofPattern("d.MM.uuuu")));
+        menuItem1.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+           statucText.setText(menuItem1.getText());
+            }
+        });
+        menuItem2.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                statucText.setText(menuItem2.getText());
+            }
+        });
+        menuItem3.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                statucText.setText(menuItem3.getText());
+            }
+        });
+
+//________________________________________________________    товары из корзины
+        JPanel panelBascket = new JPanel();
+       // panelBascket.setBackground(Color.PINK);
+        panelBascket.setLayout(new GridBagLayout());
+
+        OrderModel model = new OrderModel(listProductsList);
+        JTable productListTable = new JTable(model);
+        JScrollPane productListScrollPane = new JScrollPane(productListTable);   //прокрутка
+       productListScrollPane.setPreferredSize(new Dimension(900,300));
+
+
+        JButton deletButton = new JButton("Удалить");
+        JLabel changeLabel = new JLabel("Изменить количество:");
+        JButton plusButton = new JButton("+");
+        JButton minusButton = new JButton("-");
+        JLabel vsego = new JLabel("                              Общая сумма:");
+        JTextField vsegoText = new JTextField(10);
+        //Обновление суммы
+        for (ListProducts product : listProductsList) {
+            summa = summa + product.getOrderPrice();
+        }
+        vsegoText.setText(String.valueOf(summa));
+
+        // btm.getValueAt(1,1);
+        panelBascket.add(productListScrollPane, new GridBagConstraints(0, 0, 6, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelBascket.add(deletButton, new GridBagConstraints(0,1 , 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelBascket.add(changeLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelBascket.add(plusButton, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelBascket.add(minusButton, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelBascket.add(vsego, new GridBagConstraints(4, 1, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelBascket.add(vsegoText, new GridBagConstraints(5, 1, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+
+            plusButton.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int selectedRow = productListTable.getSelectedRow();
+                    if(selectedRow >= 0) {
+                        selectedRow = productListTable.convertRowIndexToModel(selectedRow);
+                        ListProducts listProducts = model.getListProductsAt(selectedRow);
+                        Long idProd  =  listProductsList.get(selectedRow).getProduct().getId();                  //BD
+                        Integer count = listProducts.getCount() + 1 ;
+                        listProducts.setCount(count);
+                        Double pricePr = listProducts.getOrderPrice();
+                        model.update(listProducts);
+
+                        if (Application.reader instanceof BDReader) {                                             //BD
+                            ListProductsDao listProductsDao = new ListProductsDao();
+                            listProductsDao.update(idProd, count, pricePr );
+                        }
+                        //Обновление суммы
+                        summa = 0.0;
+                        for (ListProducts product : listProductsList) {
+                            summa = summa + product.getOrderPrice();
+                        }
+                        vsegoText.setText(String.valueOf(summa));
+                    }
+                }
+            });
+            minusButton.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int selectedRow = productListTable.getSelectedRow();
+                    if (selectedRow >= 0) {
+                        selectedRow = productListTable.convertRowIndexToModel(selectedRow);
+                        ListProducts listProducts = model.getListProductsAt(selectedRow);
+                        listProducts.setCount(listProducts.getCount() - 1);
+                        Long idProd  =  listProducts.getProduct().getId();
+                        Integer count = listProducts.getCount();
+                        Double pricePr = listProducts.getOrderPrice();
+                        model.update(listProducts);
+
+                        if (Application.reader instanceof BDReader) {
+                            ListProductsDao listProductsDao = new ListProductsDao();
+                            listProductsDao.update(idProd, count, pricePr );
+                        }
+                        //Обновление суммы
+                        summa = 0.0;
+                        for (ListProducts product : listProductsList) {
+                            summa = summa + product.getOrderPrice();
+                        }
+                        vsegoText.setText(String.valueOf(summa));
+
+                    }
+                }
+            });
+        deletButton.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = productListTable.getSelectedRow();
+                if (selectedRow >= 0) {
+                    selectedRow = productListTable.convertRowIndexToModel(selectedRow);
+                    Long idProd  =  listProductsList.get(selectedRow).getProduct().getId();
+                    listProductsList.remove(selectedRow);
+                    model.removeRow(selectedRow);
+                    System.out.println(selectedRow);
+                  if (Application.reader instanceof BDReader) {
+                        ListProductsDao listProductsDao = new ListProductsDao();
+                        listProductsDao.delete(idProd);
+                   }
+                    //Обновление суммы
+                    summa = 0.0;
+                    for (ListProducts product : listProductsList) {
+                        summa = summa + product.getOrderPrice();
+                    }
+                    vsegoText.setText(String.valueOf(summa));
+                    //обновляем главное окно
+                    revalidate();
+                    repaint();
+                }
+            }
+        });
+
+
+ //________________________________________________ нижняя панель
+        JPanel panelDown = new JPanel();
+       // panelDown.setBackground(Color.GRAY);
+
+        JButton saveButton = new JButton("Сохранить");
+
+        panelDown.add(saveButton);
+        saveButton.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                if (Application.reader instanceof FileReader) {
+                    Order order1 = new Order(dataOrderText.getText(), new Person(namePersonText.getText(), adresDostavkiText.getText(), telefonNumberText.getText()),
+                            discaunt, statucText.getText(), listProductsList);
+                    Integer x = orderList.size() + 1;
+                    System.out.println(x);
+                    orderList.put(x, order1);
+
+                    Application.reader.writer("orderList.dat", orderList);
+                }
+                else {
+                    OrderDao orderDao = new OrderDao();
+                    orderDao.save(namePersonText.getText(), adresDostavkiText.getText(), telefonNumberText.getText(), dataOrderText.getText(),statucText.getText());
+                    Integer contStrok = orderDao.countStroc();
+                    ListProductsDao listProductsDao = new ListProductsDao();
+                    listProductsDao.copy(contStrok);
+                    listProductsDao.deleteAll();
+                }
+
+                Application.startFlamePrace();
+                dispose();
+
+            }
+        });
+
+ //________________________________________________
+
+        add(panelPerson, new GridBagConstraints(0, 0, 1, 1 , 1,1,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        add(panelInfo, new GridBagConstraints(1, 0, 1, 1 , 1,1,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        add(panelBascket, new GridBagConstraints(0,1 , 2, 1, 1,1,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(0, 0, 0, 0), 0, 0));
+        add(panelDown, new GridBagConstraints(0, 2,2 , 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        pack();
+    }
+    public OrderFrame(Order order, Integer x, HashMap<Integer, Order> orderList, LinkedHashSet<Product> praceList)  {
+        discaunt = order.getDiscount();
+        HashMap<Long, Product> praceMap = Application.reader.newMap();
+        for(Product product : praceList) {
+            Long key = product.getId();
+            praceMap.put(key,product);
+        }
+        setTitle("Форма заказа");
+        setSize(new Dimension(900, 400));
+        setLayout(new GridBagLayout());
+
+        //______________________________________________________   данные о персоне
+        JPanel panelPerson = new JPanel();
+        panelPerson.setLayout(new GridBagLayout());
+
+        JLabel namePerson = new JLabel("Фамилия и имя:");
+        JLabel adresDostavki = new JLabel("Адрес:");
+        JLabel telefonNumber = new JLabel("Номер телефона:");
+        JTextField namePersonText = new JTextField(order.getPerson().getNamePerson());
+        JTextField adresDostavkiText = new JTextField(order.getPerson().getAdresDostavki());
+        JTextField telefonNumberText = new JTextField(order.getPerson().getTelefonNamber());
+
+
+
+        panelPerson.add(namePerson, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelPerson.add(namePersonText, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelPerson.add(adresDostavki, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelPerson.add(adresDostavkiText, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelPerson.add(telefonNumber, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelPerson.add(telefonNumberText, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+
+//------------------------------------------------------  информационная панель
+        JPanel panelInfo = new JPanel();
+        panelInfo.setLayout(new GridBagLayout());
+
+        JLabel dataOrder = new JLabel("Дата создания заказа:");
+        JLabel place = new JLabel("Процент скидки:");
+        JLabel statuc = new JLabel("Статус заказа:");
+        JTextField dataOrderText = new JTextField(order.getDataStart());
+        JTextField placeText = new JTextField(String.valueOf(discaunt));
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu statucText = new JMenu(order.getStatusOrder());
+        JMenuItem menuItem1 = new JMenuItem("Готовится");
+        JMenuItem menuItem2 = new JMenuItem("Отгружен");
+        JMenuItem menuItem3 = new JMenuItem("Отменён");
+        statucText.add(menuItem1);
+        statucText.add(menuItem2);
+        statucText.add(menuItem3);
+        menuBar.add(statucText);
+
+
+        panelInfo.add(dataOrder, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelInfo.add(dataOrderText, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelInfo.add(place, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelInfo.add(placeText, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelInfo.add(statuc, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelInfo.add(menuBar, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+
+
+
+//________________________________________________________    товары из корзины
+        JPanel panelBascket = new JPanel();
+        panelBascket.setLayout(new GridBagLayout());
+
+        OrderModel model = new OrderModel(order.getListProductsList());
+        JTable productListTable = new JTable(model);
+        JScrollPane productListScrollPane = new JScrollPane(productListTable);   //прокрутка
+        productListScrollPane.setPreferredSize(new Dimension(900,300));
+
+
+        JButton deletButton = new JButton("Удалить");
+        JLabel changeLabel = new JLabel("Изменить количество:");
+        JButton plusButton = new JButton("+");
+        JButton minusButton = new JButton("-");
+        JLabel vsego = new JLabel("                              Общая сумма:");
+        JLabel vsegoText = new JLabel(String.valueOf(summa));
+        //Обновление суммы
+        for (ListProducts product : order.getListProductsList()) {
+            summa = summa + product.getOrderPrice();
+        }
+        vsegoText.setText(String.valueOf(summa));
+
+        panelBascket.add(productListScrollPane, new GridBagConstraints(0, 0, 6, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelBascket.add(deletButton, new GridBagConstraints(0,1 , 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelBascket.add(changeLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelBascket.add(plusButton, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelBascket.add(minusButton, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelBascket.add(vsego, new GridBagConstraints(4, 1, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        panelBascket.add(vsegoText, new GridBagConstraints(5, 1, 1, 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+
+        plusButton.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = productListTable.getSelectedRow();
+                if(selectedRow >= 0) {
+                    selectedRow = productListTable.convertRowIndexToModel(selectedRow);
+                    ListProducts listProducts = model.getListProductsAt(selectedRow);
+                    listProducts.setCount(listProducts.getCount() + 1);
+
+                    Long idProd  =  listProducts.getProduct().getId();
+                    Integer count = listProducts.getCount();
+                    Double pricePr = listProducts.getOrderPrice();
+
+                    if (Application.reader instanceof BDReader) {
+                        ListProductsDao listProductsDao = new ListProductsDao();
+                        listProductsDao.update2(idProd, count, pricePr, x );
+                    }
+                    model.update(listProducts);
+                    //Обновление суммы
+                    summa = 0.0;
+                    for (ListProducts product : order.getListProductsList()) {
+                        summa = summa + product.getOrderPrice();
+                    }
+                    vsegoText.setText(String.valueOf(summa));
+
+                }
+            }
+        });
+        minusButton.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = productListTable.getSelectedRow();
+                if (selectedRow >= 0) {
+                    selectedRow = productListTable.convertRowIndexToModel(selectedRow);
+                    ListProducts listProducts = model.getListProductsAt(selectedRow);
+                    listProducts.setCount(listProducts.getCount() - 1);
+
+                    Long idProd  =  listProducts.getProduct().getId();
+                    Integer count = listProducts.getCount();
+                    Double pricePr = listProducts.getOrderPrice();
+
+                    if (Application.reader instanceof BDReader) {
+                        ListProductsDao listProductsDao = new ListProductsDao();
+                        listProductsDao.update2(idProd, count, pricePr, x );
+                    }
+                    model.update(listProducts);
+                    //Обновление суммы
+                    summa = 0.0;
+                    for (ListProducts product : order.getListProductsList()) {
+                        summa = summa + product.getOrderPrice();
+                    }
+                    vsegoText.setText(String.valueOf(summa));
+
+                }
+            }
+        });
+        deletButton.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = productListTable.getSelectedRow();
+                if (selectedRow >= 0) {
+                    selectedRow = productListTable.convertRowIndexToModel(selectedRow);
+
+                    Long idProd  =  model.getListProductsAt(selectedRow).getProduct().getId();
+
+                    if (Application.reader instanceof BDReader) {
+                        ListProductsDao listProductsDao = new ListProductsDao();
+                        listProductsDao.delete2(idProd, x);
+                    }
+
+                    order.getListProductsList().remove(selectedRow);
+                    model.removeRow(selectedRow);
+                    //Обновление суммы
+                    summa = 0.0;
+                    for (ListProducts product : order.getListProductsList()) {
+                        summa = summa + product.getOrderPrice();
+                    }
+                    vsegoText.setText(String.valueOf(summa));
+                    vsegoText.setEnabled(false);
+                    //обновляем главное окно
+                    revalidate();
+                    repaint();
+                }
+            }
+        });
+
+
+        //________________________________________________ нижняя панель
+        JPanel panelDown = new JPanel();
+        // panelDown.setBackground(Color.GRAY);
+
+        JButton saveButton = new JButton("Сохранить");
+
+        panelDown.add(saveButton);
+        saveButton.addActionListener(new AbstractAction() {
+                  @Override
+        public void actionPerformed(ActionEvent e) {
+
+            if (Application.reader instanceof FileReader) {
+                Order order1 = new Order(dataOrderText.getText(), new Person(namePersonText.getText(), adresDostavkiText.getText(), telefonNumberText.getText()),
+                        discaunt, statucText.getText(), order.getListProductsList());
+                Integer x = orderList.size() + 1;
+                System.out.println(x);
+                orderList.put(x, order1);
+
+                Application.reader.writer("orderList.dat", orderList);
+            }
+//            else {
+//                OrderDao orderDao = new OrderDao();
+//                orderDao.save(namePersonText.getText(), adresDostavkiText.getText(), telefonNumberText.getText(), dataOrderText.getText(),statucText.getText());
+//                Integer contStrok = orderDao.countStroc();
+//                ListProductsDao listProductsDao = new ListProductsDao();
+//                listProductsDao.copy(contStrok);
+//                listProductsDao.deleteAll();
+//            }
+
+            Application.startFlamePrace();
+            dispose();
+
+        }
+    });
+
+        //________________________________________________
+
+        add(panelPerson, new GridBagConstraints(0, 0, 1, 1 , 1,1,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        add(panelInfo, new GridBagConstraints(1, 0, 1, 1 , 1,1,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        add(panelBascket, new GridBagConstraints(0,1 , 2, 1, 1,1,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(0, 0, 0, 0), 0, 0));
+        add(panelDown, new GridBagConstraints(0, 2,2 , 1, 0.0, 0.9,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(2, 2, 2, 2), 0, 0));
+        pack();
+
+        menuItem1.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                statucText.setText(menuItem1.getText());
+            }
+        });
+
+        frameNo.setLayout(new GridLayout(0,1,0,0));
+        frameNo.setSize(500,500);
+
+        menuItem2.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                statucText.setText(menuItem2.getText());
+                for(int i = 0; i < order.getListProductsList().size(); i++) {
+                    ListProducts product = order.getListProductsList().get(i);
+                    Long key = order.getListProductsList().get(i).getProduct().getId();
+                    Product productPrace = praceMap.get(key);
+                    if(product.getCount()>productPrace.getBalance()) {
+                        JLabel label = new JLabel("Не хватает товара на складе: " + productPrace.getName() + " на складе " + productPrace.getBalance());
+                        label.setForeground(Color.RED);
+                        frameNo.add(label);
+                    } else
+                    {
+                        Application.reader.setBalanceStorage((productPrace.getBalance() - product.getCount()), productPrace);
+                        HashSet<Product> praceX = new HashSet<>();
+                        for(HashMap.Entry<Long, Product> pair : praceMap.entrySet()){
+                             praceX.add(pair.getValue());
+                        }
+
+                        Application.reader.CvsWriter("product.csv", praceX);              // Обновляет прайс лист(с измененным остатком на складе)
+                        JLabel label = new JLabel("Продукт отгружен: " + productPrace.getName());
+                        frameNo.add(label);
+                    }
+
+                }
+                Order order1 = new Order(dataOrderText.getText(), new Person(namePersonText.getText(), adresDostavkiText.getText(), telefonNumberText.getText()),
+                        discaunt, "Отгружен", order.getListProductsList());
+                orderList.put(x, order1);
+                if (Application.reader instanceof BDReader) {
+                    OrderDao orderDao = new OrderDao();
+                    orderDao.update(x, "Отгружен");
+                }
+
+                Application.reader.writer("orderList.dat", orderList);
+                frameNo.setDefaultCloseOperation(3);
+                frameNo.setVisible(true);
+                setVisible(false);
+            }
+        });
+        menuItem3.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                statucText.setText(menuItem3.getText());
+                namePersonText.setEnabled(false);
+                adresDostavkiText.setEnabled(false);
+                telefonNumberText.setEnabled(false);
+                dataOrderText.setEnabled(false);
+                placeText.setEnabled(false);
+                deletButton.setEnabled(false);
+                plusButton.setEnabled(false);
+                minusButton.setEnabled(false);
+                statucText.setEnabled(false);
+            }
+        });
+        if (order.getStatusOrder().equals("Отменён")||
+            order.getStatusOrder().equals("Отгружен")) {
+            namePersonText.setEnabled(false);
+            adresDostavkiText.setEnabled(false);
+            telefonNumberText.setEnabled(false);
+            dataOrderText.setEnabled(false);
+            placeText.setEnabled(false);
+            deletButton.setEnabled(false);
+            plusButton.setEnabled(false);
+            minusButton.setEnabled(false);
+            statucText.setEnabled(false);
+        }
+    }
+}

@@ -1,0 +1,84 @@
+CREATE TABLE price_list (
+   id BIGINT not null primary key,
+    nameProduct VARCHAR(250) not null,
+    color VARCHAR(50),
+    price NUMERIC,
+    balance INTEGER
+   );
+
+INSERT INTO PRICE_LIST VALUES (32516028337746,'Кресло раскладное “ковбой”','желтый',14999.0, 14);
+INSERT INTO PRICE_LIST VALUES (32516028337712, 'Стол обеденный “маркиз”', 'орех', 15000.0, 3);
+INSERT INTO PRICE_LIST VALUES (32516028337715, 'Стол кухонный', 'белый', 8000.0, 3);
+INSERT INTO PRICE_LIST VALUES (32516028337718, 'Стул столовый “гусарский”', 'белый', 4000.0, 27);
+INSERT INTO PRICE_LIST VALUES (32516028337713, 'Стол обеденный “маркиз”', 'бук', 15000.0, 1);
+INSERT INTO PRICE_LIST VALUES (32516028337716, 'Стол кухонный', '', 8000.0, 15);
+INSERT INTO PRICE_LIST VALUES (32516028337719, 'Стул столовый с высокой спинкой', 'белый', 3500.0, 37);
+INSERT INTO PRICE_LIST VALUES (32516028337722, 'Стул детский складной', 'белый', 3000.0, 20);
+INSERT INTO PRICE_LIST VALUES (32516028337717, 'Стул столовый “гусарский”', 'орех', 4000.0, null);
+INSERT INTO PRICE_LIST VALUES (32516028337720, 'Стул столовый с высокой спинкой', 'коричневый', 3500.0,52);
+INSERT INTO PRICE_LIST VALUES (32516028337723,'Стул детский складной','желтый',3000.0,16);
+INSERT INTO PRICE_LIST VALUES (32516028337726,'Стул детский “слоненок” укрепленный','белый',4200.0,1);
+INSERT INTO PRICE_LIST VALUES (32516028337721,'Стул столовый с высокой спинкой','черный',3500.0,12);
+INSERT INTO PRICE_LIST VALUES (32516028337724,'Стул детский складной','синий',3000.0,35);
+INSERT INTO PRICE_LIST VALUES (32516028337727,'Стул детский “слоненок”','',3750.0,28);
+INSERT INTO PRICE_LIST VALUES (32516028337725,'Стул детский “слоненок”','белый',3750.0,8);
+INSERT INTO PRICE_LIST VALUES (32516028337728,'Стул детский “слоненок” укрепленный','черный',4200.0,36);
+INSERT INTO PRICE_LIST VALUES (32516028337731,'Кровать односпальная металлическая','белый',1999.0,4);
+INSERT INTO PRICE_LIST VALUES (32516028337734,'Кровать односпальная “комфорт”','орех',3999.0,13);
+INSERT INTO PRICE_LIST VALUES (32516028337729,'Кровать односпальная металлическая','синий',1999.0,14);
+INSERT INTO PRICE_LIST VALUES (32516028337735,'Кровать односпальная “комфорт”','сосна',3999.0,13);
+INSERT INTO PRICE_LIST VALUES (32516028337738,'Кровать двухспальная “молодежная”','бук',17350.0,7);
+INSERT INTO PRICE_LIST VALUES (32516028337733,'Кровать односпальная “комфорт”','бук',3999.0,1);
+INSERT INTO PRICE_LIST VALUES (32516028337736,'Кровать двухспальная “молодежная”','желтый',17350.0,1);
+INSERT INTO PRICE_LIST VALUES (32516028337739,'Кровать двухспальная “молодежная”','ясень',17350.0,3);
+INSERT INTO PRICE_LIST VALUES (32516028337742,'Кровать двухспальная “тишина”','черный',24999.0,3);
+INSERT INTO PRICE_LIST VALUES (32516028337737,'Кровать двухспальная “молодежная”','зеленый',17350.0,5);
+INSERT INTO PRICE_LIST VALUES (32516028337740,'Кровать двухспальная “молодежная”','белый',17350.0,4);
+INSERT INTO PRICE_LIST VALUES (32516028337743,'Кровать двухспальная “тишина”','бук',24999.0,36);
+INSERT INTO PRICE_LIST VALUES (32516028337714,'Стол обеденный “маркиз”','ясень',15000.0,2);
+INSERT INTO PRICE_LIST VALUES (32516028337741,'Кровать двухспальная “тишина”','',24999.0,14);
+INSERT INTO PRICE_LIST VALUES (32516028337744,'Кресло раскладное “ковбой”','синий',14999.0,27);
+INSERT INTO PRICE_LIST VALUES (32516028337747,'Кресло раскладное “гостевое”','cиний',12300.0,4);
+INSERT INTO PRICE_LIST VALUES (32516028337750,'Кресло раскладное “гостевое”','белый',12300.0,1);
+INSERT INTO PRICE_LIST VALUES (32516028337745,'Кресло раскладное “ковбой”','зелный',14999.0,28);
+INSERT INTO PRICE_LIST VALUES (32516028337748,'Кресло раскладное “гостевое”','зеленый',12300.0,5);
+INSERT INTO PRICE_LIST VALUES (32516028337751,'Кухонный уголок “затмение”','черный',27500.0,12);
+INSERT INTO PRICE_LIST VALUES (32516028337754,'Кухонный уголок “мечта”','зеленый',37500.0,2);
+INSERT INTO PRICE_LIST VALUES (32516028337749,'Кресло раскладное “гостевое”','желтый',12300.0,4);
+INSERT INTO PRICE_LIST VALUES (32516028337752,'Кухонный уголок “затмение”','желтый',27500.0,13);
+INSERT INTO PRICE_LIST VALUES (32516028337753,'Кухонный уголок “мечта”','белый',37500.0,13);
+INSERT INTO PRICE_LIST VALUES (32516028337730,'Кровать односпальная металлическая','зеленый',1999.0,6);
+
+
+CREATE TABLE ptice_Order (
+   "Номер заказа" serial primary key,
+   "Имя" VARCHAR not null,
+    "Адрес" VARCHAR not null,
+    "Номер телефона" VARCHAR not null,
+    "Дата создания" VARCHAR,
+    "Статус" VARCHAR(100)
+    );
+
+
+    CREATE TABLE ListProducts(
+       id serial primary key,
+       id_product BIGINT unique,
+        count INTEGER not null,
+        skidka VARCHAR,
+        orderPrice NUMERIC,
+        constraint  ListProducts_id_fkey foreign key (id_product) references price_list(id)
+       );
+
+
+    CREATE TABLE ListProductsOrder(
+           id serial primary key,
+           id_product BIGINT,
+            count INTEGER not null,
+            skidka VARCHAR,
+            orderPrice NUMERIC,
+            id_order INTEGER,
+            constraint  ListProductsOrder_id_order_fkey foreign key (id_order) references ptice_order("Номер заказа"),
+            constraint  ListProductsOrder_id_fkey foreign key (id_product) references price_list(id)
+           );
+
+
